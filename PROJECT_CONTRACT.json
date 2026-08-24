@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "metrics": {
+    "production_loc": 2322,
+    "production_files": 29,
+    "production_packages": 8,
+    "test_files": 10,
+    "production_functions": 199,
+    "decision_points": 367
+  },
+  "persistence": {
+    "module": "go.etcd.io/bbolt",
+    "entities": [
+      "PlayerProfile",
+      "ArcadeMachine",
+      "HighScoreEntry",
+      "MatchSchedule",
+      "PrizeDescription",
+      "SubmissionReceipt"
+    ],
+    "reopen_test": "TestPersistenceSurvivesReopen"
+  },
+  "workflows": [
+    {
+      "steps": [
+        "Register deterministic player profile",
+        "Register and publish arcade machine",
+        "Create and open match schedule, then register player",
+        "Submit verified score and render ranked leaderboard"
+      ],
+      "test": "TestWorkflowScoreDay"
+    },
+    {
+      "steps": [
+        "Create draft match with machine and capacity",
+        "Open match for registration",
+        "Register player deterministically and enforce capacity",
+        "Transition match to running and completed"
+      ],
+      "test": "TestWorkflowMatchRegistration"
+    },
+    {
+      "steps": [
+        "Publish active prize description and quantity",
+        "Select prize tier from deterministic leaderboard rank",
+        "Claim one available prize unit",
+        "Read catalog and verify claimed inventory"
+      ],
+      "test": "TestWorkflowPrizeClaim"
+    },
+    {
+      "steps": [
+        "Open bbolt database and create durable entities",
+        "Close database handle",
+        "Reopen the same database path",
+        "Read entities and verify values survived"
+      ],
+      "test": "TestPersistenceSurvivesReopen"
+    }
+  ]
+}
